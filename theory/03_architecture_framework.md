@@ -1,4 +1,4 @@
-# Structure Constraints (WIP)
+# Architecture Framework (WIP)
 
-Notes on structural boundaries and system constraints.
-Content will be added gradually.
+High-level conceptual architecture of the system.
+Content will be added after internal verification.
