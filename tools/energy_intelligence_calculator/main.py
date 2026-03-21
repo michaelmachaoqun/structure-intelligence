@@ -1,19 +1,12 @@
-import argparse
-
 # ------------------------------------------------------------
-#  Energy–Intelligence Calculator
+#  Energy–Intelligence Calculator（参数写死版）
 #  基于论文《元智能——定义下的跨域比较框架》
 #
-#  本工具实现论文中的核心物理定义，包括：
-#  - 原级能量 E0 = μk * m * g * L
-#  - 智能刻度 I0 = 1 / E0
-#  - 轮子智能比值 I_wheel / I_lever = μk / c_rr
-#  - 发动机智能 I_engine = P / E0
-#  - 信息结构智能 I_info = (ops/J) * E0
+#  本版本为“初学者友好版”，所有参数写死在代码顶部，
+#  运行 python main.py 即可直接看到结果。
 #
-#  所有公式均来自论文原文，并在注释中标明出处。
+#  代码结构仍保持专业，可随时扩展为命令行版本。
 # ------------------------------------------------------------
-
 
 # -----------------------------
 # 1. 原级能量 E0
@@ -22,13 +15,6 @@ def compute_E0(mu_k, m, g, L):
     """
     计算原级能量 E0 = μk * m * g * L
     公式来源：论文第 2.3 节
-    参数：
-        mu_k : 滑动摩擦系数（无量纲）
-        m    : 质量（kg）
-        g    : 重力加速度（m/s^2）
-        L    : 水平移动距离（m）
-    返回：
-        E0   : 原级任务所需能量（J）
     """
     return mu_k * m * g * L
 
@@ -38,10 +24,8 @@ def compute_E0(mu_k, m, g, L):
 # -----------------------------
 def compute_I0(E0):
     """
-    计算智能刻度 I0 = 1 / E0
+    智能刻度 I0 = 1 / E0
     公式来源：论文第 2.3.1 节
-    返回：
-        I0 : 智能刻度（单位：J^-1）
     """
     return 1.0 / E0
 
@@ -51,11 +35,11 @@ def compute_I0(E0):
 # -----------------------------
 def compute_wheel_ratio(mu_k, c_rr):
     """
-    计算轮子相对于杠杆的智能比值：
+    轮子相对于杠杆的智能比值：
         I_wheel / I_lever = μk / c_rr
     公式来源：论文第 3 节
     """
-    return mu_k / c_rr if c_rr else None
+    return mu_k / c_rr
 
 
 # -----------------------------
@@ -63,16 +47,11 @@ def compute_wheel_ratio(mu_k, c_rr):
 # -----------------------------
 def compute_engine_intelligence(P, E0):
     """
-    计算发动机智能：
+    发动机智能：
         I_engine = P / E0
     公式来源：论文第 4 节
-    参数：
-        P  : 发动机功率（W = J/s）
-        E0 : 原级能量（J）
-    返回：
-        I_engine : 每秒可完成的“原级任务等价次数”
     """
-    return P / E0 if P else None
+    return P / E0
 
 
 # -----------------------------
@@ -80,86 +59,76 @@ def compute_engine_intelligence(P, E0):
 # -----------------------------
 def compute_info_intelligence(ops_per_s, power, E0):
     """
-    计算信息结构智能：
-        ops/J = (operations per second) / power
+    信息结构智能：
+        ops/J = ops_per_s / power
         I_info = (ops/J) * E0
     公式来源：论文第 5 节
-    参数：
-        ops_per_s : 每秒运算次数
-        power     : 功耗（W = J/s）
-        E0        : 原级能量（J）
-    返回：
-        I_info : 信息结构智能
     """
-    if ops_per_s and power:
-        ops_per_joule = ops_per_s / power
-        return ops_per_joule * E0
-    return None
+    ops_per_joule = ops_per_s / power
+    return ops_per_joule * E0
 
 
 # -----------------------------
-# 主程序入口
+# 主程序（参数写死）
 # -----------------------------
 def main():
-    parser = argparse.ArgumentParser(
-        description="Energy–Intelligence Calculator based on the Archi framework."
-    )
 
-    # 基础参数（论文第 2.3 节）
-    parser.add_argument("--mu_k", type=float, required=True, help="Sliding friction coefficient μk")
-    parser.add_argument("--mass", type=float, default=1.0, help="Mass m (kg)")
-    parser.add_argument("--distance", type=float, default=1.0, help="Distance L (m)")
-    parser.add_argument("--g", type=float, default=9.81, help="Gravity acceleration g (m/s^2)")
+    print("==================================================")
+    print(" Energy–Intelligence Calculator（参数写死版）")
+    print("==================================================\n")
 
-    # 发动机参数（论文第 4 节）
-    parser.add_argument("--power", type=float, help="Engine power P (W)")
+    # ------------------------------------------------------------
+    # 写死参数（你可以随时修改）
+    # ------------------------------------------------------------
+
+    # 原级任务参数（论文第 2.3 节）
+    mu_k = 0.5      # 滑动摩擦系数
+    m = 1.0         # 质量（kg）
+    L = 1.0         # 距离（m）
+    g = 9.81        # 重力加速度（m/s^2）
 
     # 轮子参数（论文第 3 节）
-    parser.add_argument("--c_rr", type=float, help="Rolling resistance coefficient c_rr")
+    c_rr = 0.01     # 滚动阻力系数
+
+    # 发动机参数（论文第 4 节）
+    P_engine = 11032.5   # 15 马力柴油机 ≈ 11032.5 W
 
     # 信息结构参数（论文第 5 节）
-    parser.add_argument("--ops", type=float, help="Operations per second")
-    parser.add_argument("--p_info", type=float, help="Power consumption of info structure (W)")
+    ops_8051 = 1_000_000   # 8051 每秒运算次数
+    p_8051 = 0.02           # 8051 功耗（W）
 
-    args = parser.parse_args()
-
-    # -----------------------------
-    # 计算原级能量 E0
-    # -----------------------------
-    E0 = compute_E0(args.mu_k, args.mass, args.g, args.distance)
+    # ------------------------------------------------------------
+    # 计算原级能量与智能刻度
+    # ------------------------------------------------------------
+    E0 = compute_E0(mu_k, m, g, L)
     I0 = compute_I0(E0)
 
-    print("--------------------------------------------------")
     print("原级能量与智能刻度（论文第 2.3 节）")
-    print("--------------------------------------------------")
     print(f"E0 = {E0:.4f} J")
-    print(f"I0 = {I0:.6f} 1/J")
+    print(f"I0 = {I0:.6f} 1/J\n")
 
-    # -----------------------------
+    # ------------------------------------------------------------
     # 轮子智能比值
-    # -----------------------------
-    if args.c_rr:
-        ratio = compute_wheel_ratio(args.mu_k, args.c_rr)
-        print("\n轮子智能比值（论文第 3 节）")
-        print(f"I_wheel / I_lever = {ratio:.4f}")
+    # ------------------------------------------------------------
+    ratio = compute_wheel_ratio(mu_k, c_rr)
+    print("轮子智能比值（论文第 3 节）")
+    print(f"I_wheel / I_lever = {ratio:.4f}\n")
 
-    # -----------------------------
+    # ------------------------------------------------------------
     # 发动机智能
-    # -----------------------------
-    if args.power:
-        I_engine = compute_engine_intelligence(args.power, E0)
-        print("\n发动机智能（论文第 4 节）")
-        print(f"I_engine = {I_engine:.4f} Archis/s")
+    # ------------------------------------------------------------
+    I_engine = compute_engine_intelligence(P_engine, E0)
+    print("发动机智能（论文第 4 节）")
+    print(f"I_engine = {I_engine:.4f} Archis/s\n")
 
-    # -----------------------------
+    # ------------------------------------------------------------
     # 信息结构智能
-    # -----------------------------
-    if args.ops and args.p_info:
-        I_info = compute_info_intelligence(args.ops, args.p_info, E0)
-        print("\n信息结构智能（论文第 5 节）")
-        print(f"I_info = {I_info:.4e}")
+    # ------------------------------------------------------------
+    I_info = compute_info_intelligence(ops_8051, p_8051, E0)
+    print("信息结构智能（论文第 5 节）")
+    print(f"I_info = {I_info:.4e}\n")
 
-    print("--------------------------------------------------")
+    print("==================================================")
 
 
 if __name__ == "__main__":
