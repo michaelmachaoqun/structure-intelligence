@@ -55,8 +55,8 @@ Each folder contains a placeholder README and will be expanded gradually.
 ---
 
 ### **papers/**
-Drafts, submissions, and related notes.  
-(Will be added later.)
+paper01_physics_of_intelligence
+paper02_energy_intelligence_origin_of_ai
 
 ---
 
